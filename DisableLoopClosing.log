@@ -1,0 +1,93 @@
+diff --git a/src/LocalMapping.cc b/src/LocalMapping.cc
+index 6c87a6e..1eaafea 100644
+--- a/src/LocalMapping.cc
++++ b/src/LocalMapping.cc
+@@ -84,7 +84,7 @@ void LocalMapping::Run()
+                 KeyFrameCulling();
+             }
+ 
+-            mpLoopCloser->InsertKeyFrame(mpCurrentKeyFrame);
++            //mpLoopCloser->InsertKeyFrame(mpCurrentKeyFrame);//#LOOPCLOSING
+         }
+         else if(Stop())
+         {
+
+--------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------
+
+diff --git a/src/Tracking.cc b/src/Tracking.cc
+index 2273b2c..bd9d2e3 100644
+--- a/src/Tracking.cc
++++ b/src/Tracking.cc
+@@ -1519,7 +1519,7 @@ void Tracking::Reset()
+ 
+     // Reset Loop Closing
+     cout << "Reseting Loop Closing...";
+-    mpLoopClosing->RequestReset();
++    //mpLoopClosing->RequestReset(); //#LOOPCLOSING
+     cout << " done" << endl;
+ 
+     // Clear BoW Database
+
+--------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------
+
+diff --git a/src/System.cc b/src/System.cc
+index 8df4157..495502d 100644
+--- a/src/System.cc
++++ b/src/System.cc
+@@ -25,468 +25,689 @@
+
+     //Initialize the Loop Closing thread and launch
+-    mpLoopCloser = new LoopClosing(mpMap, mpKeyFrameDatabase, mpVocabulary, mSensor!=MONOCULAR);
+-    mptLoopClosing = new thread(&ORB_SLAM2::LoopClosing::Run, mpLoopCloser);
++    //mpLoopCloser = new LoopClosing(mpMap, mpKeyFrameDatabase, mpVocabulary, mSensor!=MONOCULAR); //#LOOPCLOSING
++    //mptLoopClosing = new thread(&ORB_SLAM2::LoopClosing::Run, mpLoopCloser); //#LOOPCLOSING
+
+ 
+     //Initialize the Viewer thread and launch
+     if(bUseViewer)
+     {
+         mpViewer = new Viewer(this, mpFrameDrawer,mpMapDrawer,mpTracker,strSettingsFile);
+         mptViewer = new thread(&Viewer::Run, mpViewer);
+         mpTracker->SetViewer(mpViewer);
+     }
+
+     //Set pointers between threads
+     mpTracker->SetLocalMapper(mpLocalMapper);
+-    mpTracker->SetLoopClosing(mpLoopCloser);
++    //mpTracker->SetLoopClosing(mpLoopCloser); //#LOOPCLOSING
+
+     mpLocalMapper->SetTracker(mpTracker);
+-    mpLocalMapper->SetLoopCloser(mpLoopCloser);
++    //mpLocalMapper->SetLoopCloser(mpLoopCloser); //#LOOPCLOSING
+
+-    mpLoopCloser->SetTracker(mpTracker);
+-    mpLoopCloser->SetLocalMapper(mpLocalMapper);
++    //mpLoopCloser->SetTracker(mpTracker); //#LOOPCLOSING
++    //mpLoopCloser->SetLocalMapper(mpLocalMapper); //#LOOPCLOSING
+
+
+
+
+void System::Shutdown()
+{
+	mpLocalMapper->RequestFinish();
+-   mpLoopCloser->RequestFinish();
++   //mpLoopCloser->RequestFinish(); //#LOOPCLOSING
+	
+	if(mpViewer)
+	{
+		mpViewer->RequestFinish();
+		while(!mpViewer->isFinished())
+			usleep(5000);
+	}
+	
+	// Wait until all thread have effectively stopped
+-   while(!mpLocalMapper->isFinished() || !mpLoopCloser->isFinished() || mpLoopCloser->isRunningGBA())
++   //while(!mpLocalMapper->isFinished() || !mpLoopCloser->isFinished() || mpLoopCloser->isRunningGBA()) //#LOOPCLOSING
++   while(!mpLocalMapper->isFinished())
+
+
