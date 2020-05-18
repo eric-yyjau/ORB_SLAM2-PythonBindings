@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import sys
 import os.path
+sys.path.append("/home/yoyee/Documents/deep_keyframe/ORB_SLAM2-PythonBindings/lib")
 import orbslam2
 import time
 import cv2
